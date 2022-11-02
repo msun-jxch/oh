@@ -163,6 +163,47 @@ def is_jcdx(match_context):
     return '检查对象' in match_context
 
 
+def get_tgjc_tjxm_txt_arr(match_context):
+    return [re.sub(r'[0-9][)）]', '', txt.strip('。')).strip()
+            if '；' in match_context else txt.strip('。')
+            for txt in match_context.split("；")]
+
+
+def get_tgjc_tjxm_arr(match_context):
+    return [re.sub(r'[0-9][)）]', '', txt.strip('。')).split('：')[0].strip()
+            if '；' in match_context else txt.strip('。')
+            for txt in match_context.split("；")]
+
+
+def get_tgjc_jcxm(tjxm_match_context):
+    return tjxm_match_context.split('：')[1].strip() if '：' in tjxm_match_context else ''
+
+
+def get_tgjc_bjxm_txt_arr(bjxm_match_context):
+    return bjxm_match_context.strip().strip('2').strip('。').strip('；').strip(';').split('、')
+
+
+def get_tgjc_xjxm_txt_arr(xjxm_match_context):
+    return xjxm_match_context.strip().strip('2').strip('。').strip('；').strip(';').split('、')
+
+
+def get_mbjb_zyjjz_txt_arr(zyjjz_match_context):
+    return [re.sub(r'[a-z0-9][)）]', '', txt.strip('。')).split('：')[0].strip()
+            if '；' in zyjjz_match_context else txt.strip('。')
+            for txt in zyjjz_match_context.split("；")]
+
+
+def get_mbjb_zyb_txt_arr(zyjjz_match_context):
+    return [txt.lstrip('1)').lstrip('2)').lstrip('3)').lstrip('4)').lstrip('5)')
+            .lstrip('1）').lstrip('2）').lstrip('3）').lstrip('4）').lstrip('5）')
+            .lstrip('a）').lstrip('b）').lstrip('c）').lstrip('d）').lstrip('e）')
+            .lstrip('a)').lstrip('b)').lstrip('c)').lstrip('d)').lstrip('e)')
+            .strip('。')
+            .strip()
+            if '；' in zyjjz_match_context else txt.strip('。')
+            for txt in zyjjz_match_context.split("；")]
+
+
 def append_base_vs_obj(base_hazard_vs_mbjb, base_key, base_item):
     # noinspection PyBroadException
     try:
@@ -263,3 +304,99 @@ for key, item in title_context.items():
 with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a') as writer:
     DataFrame(hazard_vs_jcdx.values()).to_excel(writer, '检查对象', index=False, header=True)
     logging.info(f'保存检查对象成功')
+
+hazard_vs_tgjc = []
+for key, item in hazard_vs_jcnr.items():
+    context = item['context']
+    tgjc_base = append_base_vs_obj({}, key, item)[key]
+    if '体格检查' in item:
+        for tjxm in get_tgjc_tjxm_txt_arr(item['体格检查']):
+            tgjc = copy.deepcopy(tgjc_base)
+            tgjc['体格检查'] = item['体格检查']
+            tgjc['体检项目'] = tjxm.split('：')[0].strip()
+            tgjc['检查项目'] = get_tgjc_jcxm(tjxm)
+            if tgjc['体检项目'] != '':
+                hazard_vs_tgjc.append(tgjc)
+
+with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a') as writer:
+    DataFrame(hazard_vs_tgjc).to_excel(writer, '体格检查', index=False, header=True)
+    logging.info(f'保存体格检查成功')
+
+hazard_vs_bjxm = []
+for key, item in hazard_vs_jcnr.items():
+    context = item['context']
+    bjxm_base = append_base_vs_obj({}, key, item)[key]
+    if '必检项目' in item:
+        for bjxm_text in get_tgjc_bjxm_txt_arr(item['必检项目']):
+            bjxm = copy.deepcopy(bjxm_base)
+            bjxm['所有必检项目'] = item['必检项目']
+            bjxm['必检项目'] = bjxm_text
+            if bjxm['必检项目'] != '':
+                hazard_vs_bjxm.append(bjxm)
+
+with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a') as writer:
+    DataFrame(hazard_vs_bjxm).to_excel(writer, '必检项目', index=False, header=True)
+    logging.info(f'保存必检项目成功')
+
+hazard_vs_xjxm = []
+for key, item in hazard_vs_jcnr.items():
+    context = item['context']
+    xjxm_base = append_base_vs_obj({}, key, item)[key]
+    if '选检项目' in item:
+        for xjxm_text in get_tgjc_xjxm_txt_arr(item['选检项目']):
+            xjxm = copy.deepcopy(xjxm_base)
+            xjxm['所有选检项目'] = item['选检项目']
+            xjxm['选检项目'] = xjxm_text
+            if xjxm['选检项目'] != '':
+                hazard_vs_xjxm.append(xjxm)
+
+with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a') as writer:
+    DataFrame(hazard_vs_xjxm).to_excel(writer, '选检项目', index=False, header=True)
+    logging.info(f'保存选检项目成功')
+
+hazard_vs_zyjjz = []
+for key, item in hazard_vs_mbjb.items():
+    context = item['context']
+    zyjjz_base = append_base_vs_obj({}, key, item)[key]
+    if '职业禁忌症' in item:
+        for zyjjz_text in get_mbjb_zyjjz_txt_arr(item['职业禁忌症']):
+            zyjjz = copy.deepcopy(zyjjz_base)
+            zyjjz['所有职业禁忌症'] = item['职业禁忌症']
+            zyjjz['职业禁忌症'] = zyjjz_text
+            if zyjjz['职业禁忌症'] != '':
+                hazard_vs_zyjjz.append(zyjjz)
+
+with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a') as writer:
+    DataFrame(hazard_vs_zyjjz).to_excel(writer, '职业禁忌症', index=False, header=True)
+    logging.info(f'保存职业禁忌症成功')
+
+hazard_vs_zyb = []
+for key, item in hazard_vs_mbjb.items():
+    context = item['context']
+    zyb_base = append_base_vs_obj({}, key, item)[key]
+    if '职业病' in item:
+        for zyb_text in get_mbjb_zyb_txt_arr(item['职业病']):
+            zyb = copy.deepcopy(zyb_base)
+            zyb['所有职业病'] = item['职业病']
+            zyb['职业病'] = zyb_text
+            if zyb['职业病'] != '':
+                hazard_vs_zyb.append(zyb)
+
+with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a') as writer:
+    DataFrame(hazard_vs_zyb).to_excel(writer, '职业病', index=False, header=True)
+    logging.info(f'保存职业病成功')
+
+all_zyb = list(
+    map(lambda x: {'职业病': x['职业病'].replace('(', '（').replace(')', '）').replace(' ', '')}, hazard_vs_zyb))
+
+with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a') as writer:
+    DataFrame(all_zyb).to_excel(writer, '职业病列表', index=False, header=True)
+    logging.info(f'保存职业病列表成功')
+
+all_zyjjz = list(
+    map(lambda x: {'职业禁忌症': x['职业禁忌症'].replace('(', '（').replace(')', '）').replace(' ', '')},
+        hazard_vs_zyjjz))
+
+with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a') as writer:
+    DataFrame(all_zyjjz).to_excel(writer, '职业禁忌症列表', index=False, header=True)
+    logging.info(f'保存职业禁忌症列表成功')
