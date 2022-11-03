@@ -387,16 +387,30 @@ with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a') as writer:
     logging.info(f'保存职业病成功')
 
 all_zyb = list(
-    map(lambda x: {'职业病': x['职业病'].replace('(', '（').replace(')', '）').replace(' ', '')}, hazard_vs_zyb))
+    map(lambda x: {'title_code': x['title_code'],
+                   '职业病': x['职业病'].replace('(', '（').replace(')', '）').replace(' ', '')}, hazard_vs_zyb))
 
 with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a') as writer:
     DataFrame(all_zyb).to_excel(writer, '职业病列表', index=False, header=True)
     logging.info(f'保存职业病列表成功')
 
 all_zyjjz = list(
-    map(lambda x: {'职业禁忌症': x['职业禁忌症'].replace('(', '（').replace(')', '）').replace(' ', '')},
+    map(lambda x: {'title_code': x['title_code'],
+                   '职业禁忌症': x['职业禁忌症'].replace('(', '（').replace(')', '）').replace(' ', '')},
         hazard_vs_zyjjz))
 
 with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a') as writer:
     DataFrame(all_zyjjz).to_excel(writer, '职业禁忌症列表', index=False, header=True)
     logging.info(f'保存职业禁忌症列表成功')
+
+hazards_arr = []
+for key, item in title_context.items():
+    if is_level2(item['title_code']):
+        hazards_arr.append({
+            'title_code': item['title_code'],
+            '危害因素': item['title_name'].replace(':', '：').replace('(', '（').replace(')', '）').replace(' ', '')
+        })
+
+with pd.ExcelWriter(excel_path, engine='openpyxl', mode='a') as writer:
+    DataFrame(hazards_arr).to_excel(writer, '危害因素列表', index=False, header=True)
+    logging.info(f'保存危害因素列表成功')
