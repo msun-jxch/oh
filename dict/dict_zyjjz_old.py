@@ -1,29 +1,30 @@
 import pandas as pd
 import datetime
 from sqlalchemy import create_engine
-from xpinyin import Pinyin
 
-p = Pinyin()
 now = datetime.datetime.now()
 
-df = pd.read_excel(r'../res/职业禁忌症.xlsx', sheet_name='GBZ188-2014')
-df.rename(columns={'名称': 'zyjjz_name'}, inplace=True)
+df = pd.read_excel(r'../res/字典编码标准库.xls', sheet_name='3.13职业禁忌证')
 
-df.reset_index(drop=True, inplace=True)
+df.rename(columns={'3.13职业禁忌证': 'zyjjz_upload_code'}, inplace=True)
+df.rename(columns={'Unnamed: 2': 'zyjjz_name'}, inplace=True)
+df.drop(columns=['Unnamed: 0'], inplace=True)
+df.drop(axis=0, index=0, inplace=True)
 df['zyjjz_id'] = df.index
 df.set_index(['zyjjz_id'], inplace=True)
 
 df['hospital_id'] = 10033001
 df['his_org_id'] = 10033
+
 df['his_creater_id'] = 4796260644137206666
-df['his_creater_name'] = '众阳健康管理员'
+df['his_creater_name'] = '体检主任'
 df['his_create_time'] = now
 df['his_updater_id'] = 4796260644137206666
-df['his_updater_name'] = '众阳健康管理员'
+df['his_updater_name'] = '体检主任'
 df['his_update_time'] = now
 
 try:
-    engine = create_engine('postgresql://oh_app:55EPU7v1aYHQ3DLvARPcZtSr@dev.db.oh.msun:5432/chis')
+    engine = create_engine('postgresql://oh_app:55EPU7v1aYHQ3DLvARPcZtSr@10.67.76.33:5432/chis')
     engine.execute("delete from dict_zyjjz")
     df.to_sql('dict_zyjjz', engine, schema='oh', index=True, if_exists='append')
 except Exception as e:
