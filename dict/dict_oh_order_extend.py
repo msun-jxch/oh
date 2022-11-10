@@ -57,7 +57,7 @@ df.reset_index(drop=True, inplace=True)
 df.set_index(['dict_order_extend_id'], inplace=True)
 df.to_sql('dict_oh_order_extend', engine, schema='oh', index=True, if_exists='append')
 
-with pd.ExcelWriter(r'../res/temp_dict_order_extend_df.xlsx', engine='openpyxl', mode='w') as writer:
-    df.to_excel(writer, 'dict_order_extend', index=True, header=True)
+# with pd.ExcelWriter(r'../res/temp_dict_order_extend_df.xlsx', engine='openpyxl', mode='w') as writer:
+#     df.to_excel(writer, 'dict_order_extend', index=True, header=True)
 
 print(df)
