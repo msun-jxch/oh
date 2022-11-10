@@ -13,8 +13,6 @@ res = connection.execute(
 df = DataFrame(res.fetchall())
 df.columns = res.keys()
 
-print(df)
-
 
 def get_zyjjz_id(zyjjz_name):
     name = zyjjz_name.split('（')[0].split('[')[0].strip()

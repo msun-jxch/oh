@@ -188,7 +188,7 @@ def get_tgjc_xjxm_txt_arr(xjxm_match_context):
 
 
 def get_mbjb_zyjjz_txt_arr(zyjjz_match_context):
-    return [re.sub(r'[a-z0-9][)）]', '', txt.strip('。')).split('：')[0].strip()
+    return [re.sub(r'^[a-z0-9][)）]', '', txt.strip('。')).strip()
             if '；' in zyjjz_match_context else txt.strip('。')
             for txt in zyjjz_match_context.split("；")]
 

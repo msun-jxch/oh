@@ -12,6 +12,7 @@ df.rename(columns={'名称': 'zyjjz_name'}, inplace=True)
 df.reset_index(drop=True, inplace=True)
 df['zyjjz_id'] = df.index
 df.set_index(['zyjjz_id'], inplace=True)
+df['zyjjz_name'] = df['zyjjz_name'].map(lambda name: name.replace('(', '（').replace(')', '）').replace(' ', ''))
 
 df['hospital_id'] = 10033001
 df['his_org_id'] = 10033
