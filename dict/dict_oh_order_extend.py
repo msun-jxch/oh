@@ -47,16 +47,18 @@ code.reset_index(drop=True, inplace=True)
 
 df = pd.concat([df, code], axis=1)
 
+df['dict_order_extend_id'] = df['oh_order_id']
+df['order_name'] = ''
+
+connection.execute(
+    "delete from dict_oh_order_extend where dict_order_extend_id in ("
+    + ",".join(df['dict_order_extend_id'].astype(str).tolist()) + ")"
+)
 df.reset_index(drop=True, inplace=True)
 df.set_index(['dict_order_extend_id'], inplace=True)
-df['order_name'] = ''
-# connection.execute(
-#     "delete from dict_oh_order_extend where dict_order_extend_id in ("
-#     + ",".join(df['dict_order_extend_id'].astype(str).tolist()) + ")"
-# )
 df.to_sql('dict_oh_order_extend', engine, schema='oh', index=True, if_exists='append')
 
 with pd.ExcelWriter(r'../res/temp_dict_order_extend_df.xlsx', engine='openpyxl', mode='w') as writer:
-    df.to_excel(writer, 'dict_order_extend', index=False, header=True)
+    df.to_excel(writer, 'dict_order_extend', index=True, header=True)
 
 print(df)
