@@ -44,6 +44,7 @@ table_df.reset_index(drop=True, inplace=True)
 table_df['rel_oh_order_id'] = table_df.index
 table_df.set_index(['rel_oh_order_id'], inplace=True)
 
+table_df['is_necessary'] = 0
 table_df['hospital_id'] = 10033001
 table_df['his_org_id'] = 10033
 table_df['his_creater_id'] = 4796260644137206666
