@@ -51,8 +51,7 @@ df['dict_order_extend_id'] = df['oh_order_id']
 df['order_name'] = ''
 
 connection.execute(
-    "delete from dict_oh_order_extend where dict_order_extend_id in ("
-    + ",".join(df['dict_order_extend_id'].astype(str).tolist()) + ")"
+    "delete from dict_oh_order_extend where is_custom_data=0"
 )
 df.reset_index(drop=True, inplace=True)
 df.set_index(['dict_order_extend_id'], inplace=True)
