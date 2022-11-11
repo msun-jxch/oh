@@ -16,6 +16,7 @@ df.columns = res.keys()
 
 def get_post_status_id(post_status_name):
     post_status_name = '在岗期间' if '在岗职业健康检查' == post_status_name else post_status_name
+    post_status_name = '离岗时' if '离岗前检查项目' == post_status_name else post_status_name
     for index, row in df.iterrows():
         row_name = row['post_status_name'].split('（')[0].split('[')[0].strip()
         if row_name in post_status_name:
@@ -25,6 +26,7 @@ def get_post_status_id(post_status_name):
 
 def get_post_status_name(post_status_name):
     post_status_name = '在岗期间' if '在岗职业健康检查' == post_status_name else post_status_name
+    post_status_name = '离岗时' if '离岗前检查项目' == post_status_name else post_status_name
     for index, row in df.iterrows():
         row_name = row['post_status_name'].split('（')[0].split('[')[0].strip()
         if row_name in post_status_name:

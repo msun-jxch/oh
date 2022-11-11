@@ -22,3 +22,7 @@ def get_hazard_factor_id(hazard_factor_name):
             return row['hazard_factor_id']
 
     return -1
+
+
+def radiation_id():
+    return '100'
