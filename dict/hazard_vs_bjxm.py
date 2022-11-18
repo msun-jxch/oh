@@ -34,6 +34,7 @@ with pd.ExcelWriter(tmp_path, engine='openpyxl', mode='w') as writer:
 logging.info('数据规整')
 table_df['title_code'] = df['title_code']
 table_df['order_id'] = df['必检项目'].map(lambda name: dict_oh_order_extend_util.get_order_id(name))
+table_df['order_name'] = df['必检项目'].map(lambda name: dict_oh_order_extend_util.get_dict_order_name(name))
 table_df['oh_order_id'] = df['必检项目'].map(lambda name: dict_oh_order_extend_util.get_oh_order_id(name))
 table_df['oh_order_name'] = df['必检项目'].map(lambda name: dict_oh_order_extend_util.get_oh_order_name(name))
 table_df['post_status_id'] = df['岗位状态'].map(lambda name: dict_post_status_util.get_post_status_id(name))

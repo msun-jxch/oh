@@ -22,7 +22,7 @@ with pd.ExcelWriter(tmp_path, engine='openpyxl', mode='w') as writer:
     table_df.to_excel(writer, 'hazard_vs_oh_order', index=True, header=True)
 
 logging.info('导入数据')
-table_df.drop(columns=['oh_order_id'], inplace=True)
+# table_df.drop(columns=['oh_order_id'], inplace=True)
 table_df['delete_flag'] = 0
 try:
     engine = create_engine('postgresql://oh_app:55EPU7v1aYHQ3DLvARPcZtSr@dev.db.oh.msun:5432/chis')
